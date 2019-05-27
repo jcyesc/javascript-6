@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>Nested Functions and Closures</title>
+  </head>
+  <body>
+    <h1>Nested Functions and Closures</h1>
+    <pre>
+      You can nest a function within a function. The nested (inner) function is private to its
+      containing (outer) function. It also forms a closure. A closure is an expression (typically
+      a function) that can have free variables together with an environment that binds those
+      variables (that "closes" the expression).
+
+      To summarize:
+      
+        - The inner function can be accessed only from statements in the outer function.
+        - The inner function forms a closure: the inner function can use the arguments and variables
+          of the outer function, while the outer function cannot use the arguments and variables of
+          the inner function.
+    </pre>
+    <script type="text/javascript">
+	    function outside(x) {
+	    	console.info("outside");
+	      function inside(y) {
+	    	  console.info("inside");
+          return x + y;
+	    	}
+	    	return inside;
+	    }
+	    fn_inside = outside(3); // Think of it like: give me a function that adds 3 to whatever you give it
+	    result = fn_inside(5); // returns 8
+	    console.info("Result :" + result);
+	    result1 = outside(3)(5); // returns 8
+	    console.info("Result :" + result);
+    </script>
+  
+  </body>
+</html>

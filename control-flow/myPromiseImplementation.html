@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <title>Promise example</title>
+  </head>
+  <body>
+    <h1>My Promise implementation</h1>
+    <p>
+      This script shows a possible approach to implement promises
+    </p>
+
+    <h3>The content of the file is:</h3>
+    <p id="fileContent">Loading ...........</p>
+
+    <script type="text/javascript" src="./myPromise.js"></script>
+    
+    <script>
+
+      function fileLoad(url) {
+        return new MyPromise(function(resolve, reject) {
+          let request = new XMLHttpRequest();
+          request.open('GET', url);
+          request.responseType = 'text';
+          request.onload = function() {
+            if (request.status === 200) {
+              resolve(request.response);
+              // reject(request.response);
+            } else {
+              reject(Error("Image didn't load successfully; error code:" + request.statusText));
+            }
+          };
+          request.onerror = function() {
+            reject(Error('There was a network error.'));
+          };
+          request.send();
+        }); 
+      }
+
+      // let url = "file.txt1"; // To see the promise being rejected.
+      let url = "file.txt";
+      let fileLoadPromise = fileLoad(url);
+      let resultPromise = fileLoadPromise.then(function(response) {
+        let fileContentElem = document.getElementById('fileContent');
+        fileContentElem.innerHTML = response;
+        console.info("The request was successful 1: " + response);
+      }, function(error) {
+        console.info("There was an error processing the file 1: " + error);
+      });
+
+      // Executing again the then to proof that it works.
+      resultPromise = fileLoadPromise.then(function(response) {
+          let fileContentElem = document.getElementById('fileContent');
+          fileContentElem.innerHTML = response;
+          console.info("The request was successful 2: " + response);
+        }, function(error) {
+          console.info("There was an error processing the file 2: " + error);
+        });
+
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <title>Promise example</title>
+  </head>
+  <body>
+    <h1>Use of Promises</h1>
+    <p>
+      This script will load the file and it will show the content.
+    </p>
+
+    <h3>The content of the file is:</h3>
+    <p id="fileContent">Loading ...........</p>
+    
+    <script>
+      function fileLoad(url) {
+    	  return new Promise(function(resolve, reject) {
+    		  let request = new XMLHttpRequest();
+    		  request.open('GET', url);
+    		  request.responseType = 'text';
+    		  request.onload = function() {
+    			  if (request.status === 200) {
+    				  resolve(request.response);
+    				  // reject(request.response);
+    			  } else {
+    				  reject(Error("Image didn't load successfully; error code:" + request.statusText));
+    			  }
+    		  };
+    		  request.onerror = function() {
+    			  reject(Error('There was a network error.'));
+    		  };
+    		  request.send();
+    	  }); 
+      }
+
+      let url = "file.txt";
+      let fileLoadPromise = fileLoad(url);
+      let resultPromise = fileLoadPromise.then(function(response) {
+    	  let fileContentElem = document.getElementById('fileContent');
+    	  fileContentElem.innerHTML = response;
+    	  console.info("The request was successful: " + response);
+    	  return "FirstHandler";
+      }, function(error) {
+    	  console.info("There was an error processing the file: " + error);
+      });
+      
+      console.info("promise == result: " + (fileLoadPromise == resultPromise));
+      // This part shows that when 'fileLoadPromise' is resolved, it also returns a promise 'resultPromise'
+      // where if the 'then' method is called, the resolve function will be executed even if the
+      // previous promise was rejected.
+      let newResultPromise = resultPromise.then(function(response) {
+    	  console.info("Woaaaaaaa 1: " + response);
+    	  return "SecondHandler : " + response;
+      }, function(error) {
+    	  console.info("ERROR 1................");
+      });
+
+      // Shows the chaining of promises.
+      console.info("resultPromise == newResultPromise: " + (resultPromise == newResultPromise));
+      newResultPromise = newResultPromise.then(function(response) {
+        console.info("Woaaaaaaa 2 " + response);
+      }, function(error) {
+        console.info("ERROR 2................");
+      });
+
+      /*
+        ---------
+        Promises
+        ---------
+        Starting with ECMAScript2015, JavaScript gains support for Promise objects allowing you
+        to control the flow of deferred and asynchronous operations.
+      
+        A Promise is in one of these states:
+        	- pending: initial state, not fulfilled or rejected.
+        	- fulfilled: successful operation.
+        	- rejected: failed operation.
+        	- settled: the Promise is either fulfilled or rejected, but not pending.
+      
+      */
+      
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

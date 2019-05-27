@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	  <meta charset="utf-8">
+	  <title>Overlays</title>
+	  <link rel="stylesheet" href="list.css">
+	  <style>
+			.custom-dialog {
+			  /* invisible by default */
+			  display: none;
+			  position: fixed;
+			  /* take full screen */
+			  top: 0;
+			  left: 0;
+			  width: 100vw;
+			  height: 100vh;
+			}
+
+			.custom-dialog[opened] {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  justify-content: center;
+			}
+
+			.content-wrapper {
+			  border: 3px solid black;
+			  padding: 16px;
+			  background-color: white;
+			  /* backdrop */
+			  outline: 100vmax solid rgba(0, 0, 0, 0.1);
+			}
+    </style>
+  </head>
+  <body>
+    <dialog id="dialog">
+      <h2>dialog</h2>
+      <p>Oh, hi!</p>
+      
+      <button onclick="dialog.close()">Close</button>
+    </dialog>
+  
+    <!-- tabindex: a negative value means that the element should be focusable, but
+         should not be reachable via sequential keyboard navigation.
+    -->
+		<div id="myDialog" tabindex="-1" class="custom-dialog" role="dialog">
+		  <div class="content-wrapper">
+		    <h2>My Dialog</h2>
+		    <p>Oh, hi!</p>
+		    <!-- autofocus: The button will automatically be focused the first time it is displayed. -->
+		    <button autofocus onclick="myDialog.close()">Close</button>
+		  </div>
+		</div>
+
+    <h1>This is only support by Chrome 52 or above</h1>
+    <ul>
+	    <li>
+	      Item 1
+	      <div class="buttons">
+	        <button onclick="dialog.showModal()">Open dialog</button>
+	        <button onclick="myDialog.showModal()">Open my dialog</button>
+	      </div>
+	    </li>
+	    <li>
+	      Item 2
+	      <div class="buttons">
+	        <button onclick="dialog.showModal()">Open dialog</button>
+	        <button onclick="myDialog.showModal()">Open my dialog</button>
+	      </div>
+	    </li>
+	    <li>
+	      Item 3
+	      <div class="buttons">
+	        <button onclick="dialog.showModal()">Open dialog</button>
+	        <button onclick="myDialog.showModal()">Open my dialog</button>
+	      </div>
+	    </li>
+	    <li>
+	      Item 4
+	      <div class="buttons">
+	        <button onclick="dialog.showModal()">Open dialog</button>
+	        <button onclick="myDialog.showModal()">Open my dialog</button>
+	      </div>
+	    </li>
+	  </ul>
+
+	  <script>
+	    myDialog.showModal = function() {
+	    	console.info("Opening my dialog");
+	    	this.setAttribute('opened', '');
+	      document.addEventListener('keydown', (event) => { this._onKeydown(event); });
+	      const focusableNode = this.querySelector('[autofocus]') || this;
+	      focusableNode.focus();
+	    };
+
+	    myDialog.close = function() {
+	    	console.info("Closing my dialog");
+	    	this.removeAttribute('opened');
+	    	document.removeEventListener('keydown', this._onKeydown.bind(myDialog));
+	    };
+	    
+	    myDialog._onKeydown = function(event) {
+	      // Support browsers that don't implement `key` yet.
+	      console.info("Key down ..");
+	    	if (event.key === 'Escape' || event.keyCode === 27) {
+	    	  this.close();
+	    	 }
+	    }//.bind(myDialog);
+	  </script>
+	</body>
+</html>

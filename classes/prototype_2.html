@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>Learning about inheritance and Prototypes</title>
+  </head>
+  <body>
+    <h1>Inheritance and Prototypes</h1>
+    <pre>
+      Objectives: Define a generic method enables inheritance.
+      
+      https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Details_of_the_Object_Model
+    </pre>
+
+    <script type="text/javascript">
+     
+      /**
+	      function ParentClass(a, b) { }
+	      ParentClass.prototype.foo = function(a) { };
+
+	      function ChildClass(a, b, c) {
+	        ChildClass.base(this, 'constructor', a, b);
+	      }
+	      goog.inherits(ChildClass, ParentClass);
+      */
+      function inherit(childConstructor, parentConstructor) {
+    	  function tmpConstructor() {}
+    	  tmpConstructor.prototype = parentConstructor.prototype;
+    	  childConstructor.superClass = parentConstructor.prototype;
+    	  childConstructor.prototype = new tmpConstructor(); // A new __proto__ object is created.
+    	  // if we call new parentConstructor(), we would be executing code that we don't want,
+    	  // that is the reason that we created the tmpConstructor.
+    	  childConstructor.prototype.constructor = childConstructor;
+
+    	  childConstructor.base = function(me, methodName, var_args) {
+    		  // Copying using loop to avoid deop due to passing arguments object to
+    		  // function. This is faster in many JS engines as of late 2014.
+    		  var args = new Array(arguments.length - 2);
+    		  for (var i = 2; i < arguments.length; i++) {
+    		    args[i - 2] = arguments[i];
+    		  }
+    		  return parentConstructor.prototype[methodName].apply(me, args);
+    	  };
+      }
+ 
+      function Animal(type) {
+        this.type = type || "Animal";
+      }
+      // At this point, the Animal.prototype looks like this:
+      // Animal.prototype == { constructor: Animal(), __proto__: Object }
+
+      Animal.prototype.eat = function () {
+        console.info(this.name + " eating [" + this.type + "]");
+      }
+      // At this point, the Animal.prototype looks like this:
+      // Animal.prototype == { constructor: Animal(), __proto__: Object, eat: function() }
+
+      function Cat() {
+    	  Cat.base(this, 'constructor', "Gatito");
+        this.name = "Cat";
+      }
+      // At this point, the Cat.prototype looks like this:
+      // Cat.prototype == { constructor: Cat(), __proto__: Object }
+      
+      inherit(Cat, Animal);
+
+      console.info("Cat.prototype.__proto__ == Animal.prototype : " + (Cat.prototype.__proto__ == Animal.prototype))
+      // At this point, the Cat.prototype looks like this:
+      // Cat.prototype == { __proto__: { constructor: Animal(), __proto__: Object, eat: function()},  type: "Animal" }
+
+      Cat.prototype.meow = function() {
+        console.info(this.name + " is meowing");
+      }
+      // At this point, the Cat.prototype looks like this:
+      // Cat.prototype == { __proto__: { constructor: Animal(), __proto__: Object, eat: function() }, type: "Animal", constructor: Cat(), meow: function }
+      
+
+      const gatito = new Cat();
+      // At this point, the gatito looks like this:
+      // gatito == {name: "Cat", __proto: { __proto__: { constructor: Animal(), __proto__: Object, eat: function() }, type: "Animal", constructor: Cat(), meow: function } }
+
+      gatito.eat();
+      gatito.meow();
+      
+    </script>
+  
+  </body>
+</html>

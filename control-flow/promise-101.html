@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>Promise 101</title>
+</head>
+<body>
+	<h1>Basic use of promises</h1>
+    <pre>
+        The expected output in the console is:
+        
+        First Promise: FIRST
+        First Promise, second subscriber: FIRST
+        Second Promise: FIRST SECOND
+        Result of chaining 4 promises: success_1,success_2,rejection_2,success_4
+    </pre>
+	<script>
+  
+	    let myFirstPromise = new Promise((resolve, reject) => {
+		  setTimeout(function(){
+		    resolve("FIRST");
+		  }, 250);
+		});
+		
+		let secondPromise = myFirstPromise.then((successMessage) => {
+		  console.log("First Promise: " + successMessage);
+		  return Promise.resolve(successMessage + " SECOND");
+		});
+		
+		myFirstPromise.then((response) => {
+		  console.info("First Promise, second subscriber: " + response);
+		})
+		
+		secondPromise.then((x) => console.info("Second Promise: " + x));
+		  
+		  
+		  
+		// Result of chaining 4 promises: success_1,success_2,rejection_2,success_4
+        new Promise((resolve, reject) => {
+          setTimeout(function(){
+            resolve(["success_1"]);
+          }, 250);
+        }).then((response) => {
+            response.push("success_2");
+            return Promise.reject(response);
+        }, (rejectedResponse) => {
+            rejectedResponse.push("rejection_1");
+            return Promise.reject(rejectedResponse);
+        }).then((response) => {
+            response.push("success_3");
+            return new Promise((resolve, reject) => {
+                setTimeout(function(){
+                    resolve(response);
+                }, 250);
+            });
+        }, (rejectedResponse) => {
+            rejectedResponse.push("rejection_2");
+            return new Promise((resolve, reject) => {
+                setTimeout(function(){
+                    resolve(rejectedResponse);
+                }, 250);
+            });
+        }).then((response) => {
+            response.push("success_4");
+            console.info("Result of chaining 4 promises: " + response);       
+        }, (rejectedResponse) => {
+            rejectedResponse.push("rejection_3");
+            console.info("Result of chaining 4 promises: " + rejectedResponse);        
+        }); 
+        
+		  
+		  
+      /*
+        ---------
+        Promises
+        ---------
+        Starting with ECMAScript2015, JavaScript gains support for Promise objects allowing you
+        to control the flow of deferred and asynchronous operations.
+      
+        A Promise is in one of these states:
+
+        - pending: initial state, neither fulfilled nor rejected.
+        - fulfilled: meaning that the operation completed successfully.
+        - rejected: meaning that the operation failed.
+
+        A pending promise can either be fulfilled with a value, or rejected with a 
+        reason (error). When either of these options happens, the associated handlers
+        queued up by a promise's then method are called. (If the promise has already been 
+        fulfilled or rejected when a corresponding handler is attached, the handler will 
+        be called, so there is no race condition between an asynchronous operation 
+        completing and its handlers being attached.)
+      */
+      
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

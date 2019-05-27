@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>For...in statement and For...of statement</title>
+  </head>
+  <body>
+    <h1>Arrow functions</h1>
+    <pre>
+      An arrow function expression (also known as fat arrow function) has a shorter syntax compared
+      to function expressions and lexically binds the this value. Arrow functions are always
+      anonymous.
+
+      Two factors influenced the introduction of arrow functions: shorter functions and lexical this.
+    </pre>
+
+    <script type="text/javascript">
+      const a = [
+        "Hydrogen",
+        "Helium",
+        "Lithium",
+        "Beryl­lium"
+      ];
+      
+      // Shorter functions
+      const a2 = a.map(function(s) { return s.length; });
+      console.info("a2 -> " + a2);
+
+      const a3 = a.map( (s) => s.length ); 
+      console.info("a3 -> " + a3);
+    </script>
+  
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Nested Functions and this context</title>
+  </head>
+  <body>
+    <h1>Nested Functions and this context</h1>
+    <pre>
+      This example shows an example of a nested function and the this context. It is worth
+      mentioning that "this" inside a nested function refers to the global "window" object.
+
+    </pre>
+    <script type="text/javascript">
+      function Outter() {
+    	  this.x = 90;
+    	  console.info("outter code: window == this " + (window == this)); // false
+    	  console.info("outter code: this.x: " + this.x); // 90
+
+        inside();
+
+        function inside() {
+        	console.info("inside code: window == this " + (window == this)); // true
+        	console.info("inside code: this.x: " + this.x); // undefined
+        }
+      }
+      const obj = new Outter();
+      
+    </script>
+  
+  </body>
+</html>

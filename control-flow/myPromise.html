@@ -1,0 +1,134 @@
+<html>
+<head>
+<title>My Promise implementation</title>
+</head>
+<body>
+    <h1>My Promise implementation</h1>
+    <pre>
+        The expected output in the console is:
+        
+		First Promise: FIRST
+		Second Promise: FIRST SECOND
+		First Promise, second subscriber: FIRST
+		Result of chaining 4 promises: 1,2,3,4
+		Result of chaining 4 promises: success_1,success_2,rejection_2,success_4
+		Third Promise 1: FIRST SECOND THIRD
+		Third Promise 2: FIRST SECOND THIRD
+    </pre>
+
+    <script type="text/javascript" src="./myPromise.js"></script>
+
+    <script>  
+        let myFirstPromise = new MyPromise((resolve, reject) => {
+          setTimeout(function(){
+            resolve("FIRST"); // Yay! Everything went well!
+          }, 100);
+        });
+        
+        let secondPromise = myFirstPromise.then((successMessage) => {
+          console.info("First Promise: " + successMessage);
+          
+          //return new MyPromise((resolve, reject) => resolve("SECOND RESOLVE"));
+          return MyPromise.resolve(successMessage + " SECOND");
+        });
+        
+        myFirstPromise.then((response) => {
+          console.info("First Promise, second subscriber: " + response);
+        })
+        
+        let myThirdPromise = secondPromise.then((response) => {
+            console.info("Second Promise: " + response)
+           // return MyPromise.resolve(response + " THIRD");
+           return new MyPromise((resolve, reject) => {
+	            setTimeout(function() {
+	                resolve(response + " THIRD");
+                 }, 1000);
+            });
+         });
+         
+        myThirdPromise.then((response) => {
+          console.info("Third Promise 1: " + response);
+        });
+
+        myThirdPromise.then((response) => {
+          console.info("Third Promise 2: " + response);
+        });
+        
+        
+        // Result of chaining 4 promises: 1,2,3,4
+        new MyPromise((resolve, reject) => {
+          setTimeout(function(){
+            resolve([1]);
+          }, 250);
+        }).then((response) => {
+            response.push(2);
+            return MyPromise.resolve(response);
+        }).then((response) => {
+            response.push(3);
+            return new MyPromise((resolve, reject) => {
+                setTimeout(function(){
+                    resolve(response);
+                }, 250);
+            });
+        }).then((response) => {
+            response.push(4);
+            console.info("Result of chaining 4 promises: " + response);
+        });  
+        
+        
+        // Result of chaining 4 promises: success_1,success_2,rejection_2,success_4
+        new MyPromise((resolve, reject) => {
+          setTimeout(function(){
+            resolve(["success_1"]);
+          }, 250);
+        }).then((response) => {
+            response.push("success_2");
+            return MyPromise.reject(response);
+        }, (rejectedResponse) => {
+            rejectedResponse.push("rejection_1");
+            return MyPromise.reject(rejectedResponse);
+        }).then((response) => {
+            response.push("success_3");
+            return new MyPromise((resolve, reject) => {
+                setTimeout(function(){
+                    resolve(response);
+                }, 250);
+            });
+        }, (rejectedResponse) => {
+            rejectedResponse.push("rejection_2");
+            return new MyPromise((resolve, reject) => {
+                setTimeout(function(){
+                    resolve(rejectedResponse);
+                }, 250);
+            });
+        }).then((response) => {
+            response.push("success_4");
+            console.info("Result of chaining 4 promises: " + response);        
+        }, (rejectedResponse) => {
+            rejectedResponse.push("rejection_3");
+            console.info("Result of chaining 4 promises: " + rejectedResponse);        
+        }); 
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
